@@ -47,10 +47,10 @@
                          (constantly nil)))
         edge-label (or edge-label
                        (cond
-                         a? #(if-let [a (attr g %1 %2 :label)]
+                         a? #(if-let [a (attr g %1 :label)]
                                a
-                               (if w? (weight g %1 %2)))
-                         w? #(weight g %1 %2)
+                               (if w? (weight g %1)))
+                         w? #(weight g %1)
                          :else (constantly nil)))
         sb (doto (StringBuilder.
                   (if d? "digraph \"" "graph \""))
@@ -61,10 +61,10 @@
         (doto sb
           (.append (str "  " (name k) " "))
           (.append (dot-attrs (k opts))))))
-    (doseq [[n1 n2] (distinct-edges g)]
+    (doseq [[n1 n2 :as edge] (edges g)]
       (let [n1l (str (or (node-label n1) n1))
             n2l (str (or (node-label n2) n2))
-            el (edge-label n1 n2)
+            el (edge-label edge)
             eattrs (assoc (if a?
                             (attrs g n1 n2) {})
                      :label el)]
